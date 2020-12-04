@@ -2,9 +2,9 @@
 #include <linux/device.h>
 #include <linux/module.h>
 
+MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Steward Fu");
 MODULE_DESCRIPTION("Linux Driver");
-MODULE_LICENSE("GPL");
  
 int ldd_init(void)
 {
