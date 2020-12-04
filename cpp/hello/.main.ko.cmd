@@ -1,0 +1,1 @@
+cmd_/home/steward/Data/ldd/cpp/hello/main.ko := arm-linux-gnueabihf-ld -EL -r  -T /home/steward/Downloads/kernel/scripts/module-common.lds --build-id  -o /home/steward/Data/ldd/cpp/hello/main.ko /home/steward/Data/ldd/cpp/hello/main.o /home/steward/Data/ldd/cpp/hello/main.mod.o

@@ -1,6 +1,6 @@
 export ARCH=arm
 export CROSS_COMPILE=arm-linux-gnueabihf-
-KERNEL=$(HOME)/kernel
+KERNEL=$(HOME)/Downloads/kernel
 
 obj-m += main.o
 all:
