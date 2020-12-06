@@ -5,10 +5,16 @@
 .extern free_irq
 .extern gpio_to_desc
 .extern gpiod_to_irq
+.extern tasklet_init
+.extern tasklet_kill
+.extern _test_and_set_bit
+.extern __tasklet_schedule
 .extern request_threaded_irq
 
-.equ BUTTON, 27
+.equ BUTTON,              27
 .equ IRQF_TRIGGER_RISING, 1
+.equ TASKLET_STATE_SCHED, 0
+.equ TASKLET_STATE_RUN,   1
 
 .section .modinfo, "ae"
 __UNIQUE_ID_0: .asciz "license=GPL"
@@ -18,24 +24,60 @@ __UNIQUE_ID_1: .asciz "author=Steward Fu"
 __UNIQUE_ID_2: .asciz "description=Linux Driver"
 .align
 
+.equ tasklet.next,  0
+.equ tasklet.state, 4
+.equ tasklet.count, 8
+.equ tasklet.func,  12
+.equ tasklet.data,  16
+
+.struct 0
+tasklet_s:
+  i0: .struct . + 4
+  i1: .struct . + 4
+  i2: .struct . + 4
+  i3: .struct . + 4
+  i4: .struct . + 4
+tasklet_e:
+tasklet_l = tasklet_e - tasklet_s
+
 .section .data
 btn_irq:  .dcb 4
 .align
 irq_name: .asciz "gpio_irq"
 .align
-irq_msg:  .asciz "irq_handler\n"
+task_msg: .asciz "tasklet_handler\n"
+.align
+mytask:   .space tasklet_l
 .align
 
 .section .text
+tasklet_handler:
+  push {lr}
+  ldr r0, =task_msg
+  bl printk
+  pop {pc}
+
 irq_handler:
   push {lr}
-  ldr r0, =irq_msg
-  bl printk
+  mov r0, #TASKLET_STATE_SCHED
+  ldr r1, =mytask
+  add r1, #tasklet.state
+  bl _test_and_set_bit
+  cmp r0, #0
+  bne irq_exit
+  ldr r0, =mytask
+  bl __tasklet_schedule
+irq_exit:
   mov r0, #1
   pop {pc}
 
 init_module:
   push {r4, r5, lr}
+
+  ldr r0, =mytask
+  ldr r1, =tasklet_handler
+  mov r2, #0
+  bl tasklet_init
 
   mov r0, #BUTTON
   bl gpio_to_desc
@@ -61,6 +103,8 @@ cleanup_module:
   ldr r0, [r0]
   mov r1, #0
   bl free_irq
+  ldr r0, =mytask
+  bl tasklet_kill
   pop {pc}
 .end
 
