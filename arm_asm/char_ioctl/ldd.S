@@ -108,15 +108,11 @@ chr_name:  .asciz "myfile"
 .align
 open_msg:  .asciz "myopen\n"
 .align
-write_msg: .asciz "mywrite, %s\n"
-.align
-read_msg:  .asciz "myread, %s\n"
+ioctl_msg: .asciz "myioctl, 0x%x\n"
 .align
 close_msg: .asciz "myclose\n"
 .align
 myclass:   .dcb 4
-.align
-mybuf:     .dcb 255
 .align
 
 .section .text
@@ -127,48 +123,12 @@ myopen:
   mov r0, #0
   pop {pc}
 
-myread:
-  push {r4, lr}
-
-  mov r4, r1
-
-  ldr r0, =mybuf
-  bl strlen
-  mov r2, r0
-
-  ldr r0, =0x55555555
-  mcr p15, 0, r0, c3, c0, 0
-  isb sy
-
-  mov r0, r4
-  ldr r1, =mybuf
-  bl arm_copy_to_user
-  mov r4, r0
-
-  ldr r0, =read_msg
-  ldr r1, =mybuf
+myioctl:
+  push {lr}
+  ldr r0, =ioctl_msg
   bl printk
-
-  mov r0, r4
-  pop {r4, pc}
-
-mywrite:
-  push {r4, lr}
-
-  ldr r0, =0x55555555
-  mcr p15, 0, r0, c3, c0, 0
-  isb sy
-
-  ldr r0, =mybuf
-  bl arm_copy_from_user
-  mov r4, r0
-
-  ldr r0, =write_msg
-  ldr r1, =mybuf
-  bl printk
-
-  mov r0, r4
-  pop {r4, pc}
+  mov r0, #0
+  pop {pc}
 
 myclose:
   push {lr}
@@ -184,14 +144,11 @@ init_module:
   add r1, r0, #file_operations.open
   ldr r2, =myopen
   str r2, [r1]
+  add r1, r0, #file_operations.unlocked_ioctl
+  ldr r2, =myioctl
+  str r2, [r1]
   add r1, r0, #file_operations.release
   ldr r2, =myclose
-  str r2, [r1]
-  add r1, r0, #file_operations.read
-  ldr r2, =myread
-  str r2, [r1]
-  add r1, r0, #file_operations.write
-  ldr r2, =mywrite
   str r2, [r1]
 
   ldr r0, =base
