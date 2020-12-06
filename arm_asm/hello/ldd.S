@@ -1,8 +1,6 @@
 .global init_module
 .global cleanup_module
 
-.extern printk
-
 .section .modinfo, "ae"
 __UNIQUE_ID_0: .asciz "license=GPL"
 .align

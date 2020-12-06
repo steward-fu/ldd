@@ -1,12 +1,6 @@
 .global init_module
 .global cleanup_module
 
-.extern printk
-.extern free_irq
-.extern gpio_to_desc
-.extern gpiod_to_irq
-.extern request_threaded_irq
-
 .equ BUTTON, 27
 .equ IRQF_TRIGGER_RISING, 1
 

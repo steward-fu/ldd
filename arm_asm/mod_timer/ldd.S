@@ -1,18 +1,6 @@
 .global init_module
 .global cleanup_module
 
-.extern jiffies
-
-.extern printk
-.extern msleep
-.extern init_timer_key
-.extern mod_timer
-.extern gpio_free
-.extern gpio_request
-.extern gpio_to_desc
-.extern gpiod_set_raw_value
-.extern gpiod_direction_output_raw
-
 .equ USR3_LED, ((32 * 1) + 24)
 .equ PERIOD,   (300 / 4)
 
