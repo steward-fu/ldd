@@ -8,11 +8,8 @@
 
 .section .modinfo, "ae"
 __UNIQUE_ID_0: .asciz "license=GPL"
-.align
 __UNIQUE_ID_1: .asciz "author=Steward Fu"
-.align
 __UNIQUE_ID_2: .asciz "description=Linux Driver"
-.align
 
 .equ tasklet.next,  0
 .equ tasklet.state, 4
@@ -32,14 +29,11 @@ tasklet_l = tasklet_e - tasklet_s
 
 .section .data
 btn_irq:  .dcb 4
-.align
 irq_name: .asciz "gpio_irq"
-.align
 task_msg: .asciz "tasklet_handler\n"
-.align
 mytask:   .space tasklet_l
-.align
 
+.align 2
 .section .text
 tasklet_handler:
   push {lr}

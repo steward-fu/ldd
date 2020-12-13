@@ -1,3 +1,5 @@
+.set noreorder
+
 .global init_module
 .global cleanup_module
 
@@ -13,15 +15,29 @@ msg_unload: .asciz "unload it\n"
 .align 2
 .section .text
 init_module:
-  push {lr}
-  ldr r0, =msg_load
-  bl printk
-  mov r0, #0
-  pop {pc}
+  addiu $sp, -4
+  sw $ra, 0($sp)
+
+  la $a0, msg_load
+  jal printk
+  nop
+
+  lw $ra, 0($sp)
+  addiu $sp, 4
+  
+  jr $ra
+  move $v0, $0
 
 cleanup_module:
-  push {lr}
-  ldr r0, =msg_unload
-  bl printk
-  pop {pc}
-.end
+  addiu $sp, -4
+  sw $ra, 0($sp)
+
+  la $a0, msg_unload
+  jal printk
+  nop
+  
+  lw $ra, 0($sp)
+  addiu $sp, 4
+  
+  jr $ra
+  move $v0, $0

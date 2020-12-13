@@ -3,11 +3,8 @@
 
 .section .modinfo, "ae"
 __UNIQUE_ID_0: .asciz "license=GPL"
-.align
 __UNIQUE_ID_1: .asciz "author=Steward Fu"
-.align
 __UNIQUE_ID_2: .asciz "description=Linux Driver"
-.align
 
 .equ cdev.kobj,  0
 .equ cdev.owner, 36
@@ -99,22 +96,15 @@ file_operations_l = file_operations_e - file_operations_s
 
 .section .data
 base:      .dcb 4
-.align
 mycdev:    .space cdev_l
-.align
 myfops:    .space file_operations_l
-.align
 chr_name:  .asciz "myfile"
-.align
 open_msg:  .asciz "myopen\n"
-.align
 ioctl_msg: .asciz "myioctl, 0x%x\n"
-.align
 close_msg: .asciz "myclose\n"
-.align
 myclass:   .dcb 4
-.align
 
+.align 2
 .section .text
 myopen:
   push {lr}
