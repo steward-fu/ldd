@@ -2,8 +2,8 @@
 
 .section .data
 dev_name: .asciz "/dev/myfile"
-.align
 
+.align 2
 .section .text
 main:
   push {r4, lr}
