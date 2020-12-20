@@ -30,24 +30,15 @@ static irqreturn_t irq_handler(int irq, void *arg)
 
 int ldd_init(void)
 {
-  int irq=0;
-
   myworkqueue = alloc_workqueue("myworkqueue", 0, 0);
   INIT_WORK(&mywork, workqueue_handler);
-
-  irq = gpio_to_irq(BUTTON);
-  if(request_irq(irq, irq_handler, IRQF_TRIGGER_RISING, "gpio_irq", NULL)){
-    printk("%s, failed to request irq(%d)\n", __func__, irq);
-  }
+  request_irq(gpio_to_irq(BUTTON), irq_handler, IRQF_TRIGGER_RISING, "gpio_irq", NULL);
   return 0;
 }
  
 void ldd_exit(void)
 {
-  int irq=0;
-  
-  irq = gpio_to_irq(BUTTON);
-  free_irq(irq, NULL);
+  free_irq(gpio_to_irq(BUTTON), NULL);
   destroy_workqueue(myworkqueue);
 }
  

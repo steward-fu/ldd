@@ -14,30 +14,28 @@ MODULE_DESCRIPTION("Linux Driver");
  
 #define BUTTON 27
 
-struct tasklet_struct mytask={0};
-
-void tasklet_handler(unsigned long data)
+void softirq_handler(struct softirq_action *action)
 {
   printk("%s\n", __func__);
 }
 
 static irqreturn_t irq_handler(int irq, void *arg)
 {
-  tasklet_schedule(&mytask);
+  raise_softirq(POCKETBEAGLE_SOFTIRQ);
   return IRQ_HANDLED;
 }
 
 int ldd_init(void)
 {
-  tasklet_init(&mytask, tasklet_handler, 0);
   request_irq(gpio_to_irq(BUTTON), irq_handler, IRQF_TRIGGER_RISING, "gpio_irq", NULL);
+  open_softirq(POCKETBEAGLE_SOFTIRQ, softirq_handler);
   return 0;
 }
  
 void ldd_exit(void)
 {
+  raise_softirq_irqoff(POCKETBEAGLE_SOFTIRQ);
   free_irq(gpio_to_irq(BUTTON), NULL);
-  tasklet_kill(&mytask);
 }
  
 module_init(ldd_init);
